@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: ${WSGB_DATABASE_PASSWORD}
       POSTGRES_DB: ${WSGB_DATABASE_NAME}
     volumes:
-      -db:/var/lib/postgresql/data
+      - db:/var/lib/postgresql/data
 
 volumes:
   db:
