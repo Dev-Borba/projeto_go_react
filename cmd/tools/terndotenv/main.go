@@ -15,7 +15,7 @@ func main() {
 		"tern",
 		"migrate",
 		"--migrations",
-		"./internal/store/pgstore/migration",
+		"./internal/store/pgstore/migrations",
 		"--config",
 		"./internal/store/pgstore/migrations/tern.conf",
 	)
