@@ -1,7 +1,7 @@
-service:
+services:
   db:
-    image: postgress:latest
-    restar: unless-stopped
+    image: postgres:latest
+    restart: unless-stopped
     ports:
       - ${WSGB_DATABASE_PORT:-5432}:5432
     environment:
