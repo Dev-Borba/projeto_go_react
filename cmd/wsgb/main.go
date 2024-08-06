@@ -2,11 +2,14 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
 
+	"github.com/Dev-Borba/projeto_go_react/internal/api"
+	"github.com/Dev-Borba/projeto_go_react/internal/store/pgstore"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 )
@@ -16,7 +19,7 @@ func main() {
 		panic(err)
 	}
 
-	ctx :=context.Background()
+	ctx := context.Background()
 
 	pool, err := pgxpool.New(ctx, fmt.Sprintf(
 		"user=%s password=%s host=%s port=%s dbname=%s",
@@ -32,13 +35,13 @@ func main() {
 
 	defer pool.Close()
 
-	if err := pool.Ping(ctx); err != {
+	if err := pool.Ping(ctx); err != nil {
 		panic(err)
 	}
 
 	handler := api.NewHandler(pgstore.New(pool))
 
-	go func ()  {
+	go func() {
 		if err := http.ListenAndServe(":8080", handler); err != nil {
 			if !errors.Is(err, http.ErrServerClosed) {
 				panic(err)
