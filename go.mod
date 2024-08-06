@@ -3,12 +3,14 @@ module github.com/Dev-Borba/projeto_go_react
 go 1.22.5
 
 require (
+	github.com/go-chi/chi v1.5.5
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.6.0
 	github.com/joho/godotenv v1.5.1
 )
 
 require (
+	github.com/go-chi/cors v1.2.1 // indirect
 	github.com/jackc/puddle/v2 v2.2.1 // indirect
 	golang.org/x/sync v0.7.0 // indirect
 )
