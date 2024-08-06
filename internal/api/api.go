@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"log/slog"
 	"net/http"
@@ -107,12 +108,42 @@ func (h apiHandler) handleSubscribe(w http.ResponseWriter, r *http.Request) {
 	if _, ok := h.subscribers[rawRoomId]; !ok {
 		h.subscribers[rawRoomId] = make(map[*websocket.Conn]context.CancelFunc)
 	}
+	slog.Info("new client connected", "room_id", rawRoomId, "client_ip", r.RemoteAddr)
 	h.subscribers[rawRoomId][c] = cancel
 	h.mu.Unlock()
 
 	<-ctx.Done()
+
+	h.mu.Lock()
+	delete(h.subscribers[rawRoomId], c)
+	h.mu.Unlock()
 }
-func (h apiHandler) handleCreateRoom(w http.ResponseWriter, r *http.Request)             {}
+func (h apiHandler) handleCreateRoom(w http.ResponseWriter, r *http.Request) {
+	type _body struct {
+		Theme string `json:"theme`
+	}
+	var body _body
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		http.Error(w, "invalid json", http.StatusBadRequest)
+		return
+	}
+
+	roomID, err := h.q.InsertRoom(r.Context(), body.Theme)
+	if err != nil {
+		slog.Error("failed to insert room", "error", err)
+		http.Error(w, "something went wrong", http.StatusInternalServerError)
+		return
+	}
+
+	type response struct {
+		ID string `json:"id"`
+	}
+
+	data, _ := json.Marshal(response{ID: roomID.String()})
+	w.Header().Set("Content-Type", "application/json")
+	_, _ = w.Write(data)
+}
+
 func (h apiHandler) handleGetRooms(w http.ResponseWriter, r *http.Request)               {}
 func (h apiHandler) handleCreateRoomMessage(w http.ResponseWriter, r *http.Request)      {}
 func (h apiHandler) handleCreateRoomMessages(w http.ResponseWriter, r *http.Request)     {}
