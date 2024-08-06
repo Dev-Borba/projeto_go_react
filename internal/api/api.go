@@ -120,7 +120,7 @@ func (h apiHandler) handleSubscribe(w http.ResponseWriter, r *http.Request) {
 }
 func (h apiHandler) handleCreateRoom(w http.ResponseWriter, r *http.Request) {
 	type _body struct {
-		Theme string `json:"theme`
+		Theme string `json:"theme"`
 	}
 	var body _body
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
